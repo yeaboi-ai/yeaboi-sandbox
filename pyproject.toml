@@ -20,6 +20,11 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
+# The Pulumi providers, kept out of the default install: the hermetic lanes and
+# `sbx tiers` need none of them, and the tooling nightly installs no extras.
+infra = [
+    "pulumi-pagerduty>=4,<5",
+]
 dev = [
     "pytest>=8",
     "pytest-recording>=0.13",

@@ -1,0 +1,30 @@
+# One triggered incident on this environment's own service.
+#
+# severity is `high`, not `critical`, and that is not a mistake:
+# connectors/pagerduty.py:87 feeds `urgency` into clean_severity, and PagerDuty
+# urgency is only high|low. This fixture pins that so the day it changes is a
+# red test rather than a surprise.
+id: checkout-high
+connector: pagerduty
+temporal: windowed        # PagerDuty reports incidents by created_at, so the
+                          # seed must be raised inside the asserted window.
+seed:
+  name: checkout
+  urgency: high
+captures: [ref, created_at, url, service]
+expect:
+  surface: fetch
+  deadline_s: 90          # Events API v2 enqueues; the incident surfaces async.
+  closed_world: true      # the service is this environment's alone.
+  exact_count: 1
+  events:
+    - kind: incident
+      source: pagerduty
+      fields:
+        ref:        {op: eq, value: "${capture.ref}"}
+        service:    {op: eq, value: "${capture.service}"}
+        severity:   {op: eq, value: high}
+        status:     {op: eq, value: triggered}
+        started_at: {op: iso_z_within, value: "${capture.created_at}", tolerance_s: 90}
+        ended_at:   {op: eq, value: ""}
+        url:        {op: url_shape, host: "${tenant.pagerduty_host}", path_glob: "/incidents/*"}
