@@ -14,6 +14,11 @@ what was seeded.
 
 **Nothing here changes yeaboi.** It consumes the released wheel and the vendored connector catalog.
 
+This repo lives at `yeaboi-ai/yeaboi-sandbox`. The *fixture* repos it creates and destroys
+(`sbx-17-api` and friends) live in a separate org, **`yeaboi-sbx`** — see `docs/tenants.md` for
+why: GitHub cannot scope repository creation below an org, so the credential that makes them can
+also delete them, and that credential must not point at the org holding the product.
+
 ## Why real tenants
 
 Severity mapping and timestamp normalisation are the two things a mock can never catch and a real

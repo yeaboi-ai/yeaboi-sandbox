@@ -83,8 +83,8 @@ SANDBOX_ROWS: tuple[SandboxConnector, ...] = (
         tier="A",
         status="pending",
         provisioner="bridge:mrolla/circleci",
-        tenant="circleci-org-yeaboi-sandbox",
-        prefix_scope="follows the sandbox GitHub org's sbx-<n>-* repos",
+        tenant="circleci-org-yeaboi-sbx",
+        prefix_scope="follows the yeaboi-sbx org's sbx-<n>-* repos",
         envs=(
             "CIRCLECI_TOKEN",
             "CIRCLECI_ORG_SLUG",
@@ -93,7 +93,8 @@ SANDBOX_ROWS: tuple[SandboxConnector, ...] = (
             "follow sbx-<n>-api",
             "trigger one pipeline through API v2",
         ),
-        cost_note="CIRCLECI_ORG_SLUG names a VCS org, which is why the GitHub sandbox must be its own org.",
+        cost_note="CIRCLECI_ORG_SLUG names a VCS org and the fetcher lists pipelines org-wide, so pointing it "
+        "at gh/yeaboi-ai would put CircleCI on the org holding the product. It reads gh/yeaboi-sbx.",
     ),
     SandboxConnector(
         key="confluence",
@@ -119,15 +120,18 @@ SANDBOX_ROWS: tuple[SandboxConnector, ...] = (
         tier="A",
         status="pending",
         provisioner="pulumi:pulumi-github",
-        tenant="github-org-yeaboi-sandbox",
-        prefix_scope="repository names inside the yeaboi-sandbox org: sbx-<n>-*",
+        tenant="github-org-yeaboi-sbx",
+        prefix_scope="repository names inside the yeaboi-sbx org: sbx-<n>-*",
         envs=("GITHUB_TOKEN",),
         seeds=(
             "repo sbx-<n>-api with a README and 3 labels",
             "6 issues, 2 of them closed",
             "one open PR from feature/seed",
         ),
-        cost_note="free; a GitHub App installed only on the sandbox org mints a 1-hour token per run.",
+        cost_note="a SEPARATE org from yeaboi-ai, because GitHub cannot scope repo CREATION below an org: "
+        "anything that makes sbx-<n>-api has org-wide create and delete rights, and the sweeper "
+        "deletes by name prefix. A GitHub App installed only on yeaboi-sbx mints a 1-hour token "
+        "per run. Free; the harness repo itself still lives at yeaboi-ai/yeaboi-sandbox.",
     ),
     SandboxConnector(
         key="gitlab",
