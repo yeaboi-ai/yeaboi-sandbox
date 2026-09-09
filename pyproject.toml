@@ -1,0 +1,52 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "yeaboi-sandbox"
+version = "0.1.0"
+description = "Real, disposable vendor tenants every yeaboi connector is proved against."
+readme = "README.md"
+requires-python = ">=3.10"
+license = {text = "MIT"}
+dependencies = [
+    # The wheel under test. The sandbox drives what ships, never a source tree.
+    "yeaboi>=3.45",
+    "pulumi>=3.150,<4",
+    "pulumi-aws>=6,<8",
+    "boto3>=1.34",
+    "httpx>=0.27",
+    "pyyaml>=6",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8",
+    "pytest-recording>=0.13",
+    "ruff>=0.6",
+]
+
+[project.scripts]
+sbx = "yeaboi_sandbox.cli:main"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/yeaboi_sandbox"]
+
+[tool.ruff]
+src = ["src"]
+line-length = 120
+target-version = "py310"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "S"]
+# S101 assert: this repo is a test harness; asserts are the product.
+ignore = ["S101"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+# --showlocals is BANNED: a frame local named `token` in a seeder would print it.
+addopts = "-q --strict-markers"
+markers = [
+    "live: needs a provisioned sandbox environment (SBX_ENV_ID set); skipped otherwise",
+    "vcr: replays a recorded cassette; no network",
+]

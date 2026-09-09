@@ -1,0 +1,36 @@
+# The hermetic lane. No AWS, no vendor, no credentials — so it is safe on a fork
+# PR and it is what yeaboi-tooling's nightly runs.
+#
+# pull_request_target is banned here and `make lint` fails on it: it evaluates
+# base-branch workflow logic over head-branch test code that runs with real
+# vendor tokens in its environment. A GitHub Environment with required reviewers
+# is the correct way to give an approved PR credentials.
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  gate:
+    name: ship-gate (hermetic)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: astral-sh/setup-uv@v5
+      - run: make install
+      - run: make lint
+      - run: make format-check
+      - run: make test
+      - run: make contracts-check
+      - run: make tooling-check

@@ -1,0 +1,11 @@
+.tooling/
+.venv/
+.sbx/
+__pycache__/
+*.pyc
+.pytest_cache/
+.ruff_cache/
+# Ephemeral stack configs are set through the Automation API, never committed.
+# Only infra/env/Pulumi.sbx-1.yaml (the shared team env) is tracked.
+infra/env/Pulumi.sbx-*.yaml
+!infra/env/Pulumi.sbx-1.yaml
