@@ -9,3 +9,11 @@ __pycache__/
 # Only infra/env/Pulumi.sbx-1.yaml (the shared team env) is tracked.
 infra/env/Pulumi.sbx-*.yaml
 !infra/env/Pulumi.sbx-1.yaml
+
+.worktrees/
+
+.claude/worktrees/
+
+.agents/skills/yeaboi-*
+
+.agents/skills/repo-workflow
